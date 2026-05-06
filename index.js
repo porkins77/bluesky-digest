@@ -10,9 +10,6 @@ const POST_LIMIT = 75;
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
 async function createSession() {
-  console.log("Handle:", JSON.stringify(process.env.BSKY_HANDLE));
-  console.log("Password length:", process.env.BSKY_APP_PASSWORD?.length);
-
   const res = await fetch(`${BSKY_API}/com.atproto.server.createSession`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -48,24 +45,56 @@ async function fetchTimeline(token) {
 
   const data = await res.json();
 
-  // Normalize posts: extract text and author info, skip reposts with no text
   return data.feed
     .map(item => {
       const post = item.post;
       const record = post.record;
-      // Skip replies to reduce noise (optional — remove this filter if you want them)
+
       if (record.reply) return null;
       const text = record.text?.trim();
       if (!text || text.length < 20) return null;
+
+      // Build Bluesky post URL from URI
+      // URI format: at://did:plc:xxx/app.bsky.feed.post/postid
+      let postUrl = null;
+      try {
+        const uriParts = post.uri.replace("at://", "").split("/");
+        const postId = uriParts[2];
+        const handle = post.author.handle;
+        postUrl = `https://bsky.app/profile/${handle}/post/${postId}`;
+      } catch (_) {}
+
+      // Engagement score: weighted sum of likes, reposts, replies
+      const likes = post.likeCount || 0;
+      const reposts = post.repostCount || 0;
+      const replies = post.replyCount || 0;
+      const engagementScore = likes + (reposts * 2) + replies;
+
+      // Extract any URLs from the post's facets (Bluesky's link metadata)
+      const links = [];
+      if (record.facets) {
+        for (const facet of record.facets) {
+          for (const feature of facet.features || []) {
+            if (feature.$type === "app.bsky.richtext.facet#link" && feature.uri) {
+              links.push(feature.uri);
+            }
+          }
+        }
+      }
 
       return {
         author: post.author.displayName || post.author.handle,
         handle: `@${post.author.handle}`,
         text,
-        uri: post.uri
+        postUrl,
+        links,
+        engagementScore,
+        indexedAt: post.indexedAt || record.createdAt || null
       };
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    // Sort by engagement descending before sending to Claude
+    .sort((a, b) => b.engagementScore - a.engagementScore);
 }
 
 // ── Summarize with Claude ─────────────────────────────────────────────────────
@@ -81,7 +110,7 @@ async function summarize(posts) {
       "anthropic-version": "2023-06-01"
     },
     body: JSON.stringify({
-      model: "claude-opus-4-5",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 4096,
       messages: [{ role: "user", content: prompt }]
     })
@@ -94,11 +123,36 @@ async function summarize(posts) {
 
   const data = await res.json();
   const raw = data.content[0].text.trim();
-
-  // Strip markdown fences if present
   const clean = raw.replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
 
   return JSON.parse(clean);
+}
+
+// ── Merge engagement data back into digest ────────────────────────────────────
+
+function mergeEngagementData(digest, posts) {
+  const postMap = new Map();
+  for (const p of posts) {
+    postMap.set(p.text.slice(0, 80), p);
+  }
+
+  for (const category of digest.categories || []) {
+    for (const post of category.posts || []) {
+      const key = post.text.slice(0, 80);
+      const original = postMap.get(key);
+      if (original) {
+        post.postUrl = original.postUrl;
+        post.links = original.links;
+        post.engagementScore = original.engagementScore;
+        post.indexedAt = original.indexedAt;
+      }
+    }
+
+    // Sort posts within each category by engagement score
+    category.posts.sort((a, b) => (b.engagementScore || 0) - (a.engagementScore || 0));
+  }
+
+  return digest;
 }
 
 // ── Write output ──────────────────────────────────────────────────────────────
@@ -127,8 +181,11 @@ async function main() {
   }
 
   console.log("→ Sending to Claude for categorization...");
-  const digest = await summarize(posts);
-  console.log(`  Categorized into ${digest.categories?.length ?? 0} sections`);
+  const rawDigest = await summarize(posts);
+  console.log(`  Categorized into ${rawDigest.categories?.length ?? 0} sections`);
+
+  console.log("→ Merging engagement data...");
+  const digest = mergeEngagementData(rawDigest, posts);
 
   console.log("→ Rendering HTML...");
   writeDigest(digest);
