@@ -1,0 +1,43 @@
+name: Daily Bluesky Digest
+
+on:
+  schedule:
+    # Runs at 7:00 AM Pacific (15:00 UTC). Adjust UTC hour if needed:
+    # PT  = UTC-8 (winter) / UTC-7 (summer)
+    # 7am PT winter = 15:00 UTC | 7am PT summer = 14:00 UTC
+    - cron: "0 15 * * *"
+  workflow_dispatch: # Allows manual runs from GitHub Actions tab
+
+jobs:
+  build-digest:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # Required to push the generated HTML
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run digest script
+        env:
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node index.js
+
+      - name: Commit and push digest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html
+          git diff --cached --quiet || git commit -m "Daily digest: $(date -u '+%Y-%m-%d')"
+          git push
