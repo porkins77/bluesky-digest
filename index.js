@@ -10,6 +10,9 @@ const POST_LIMIT = 75;
 // ── Auth ──────────────────────────────────────────────────────────────────────
 
 async function createSession() {
+  console.log("Handle:", JSON.stringify(process.env.BSKY_HANDLE));
+  console.log("Password length:", process.env.BSKY_APP_PASSWORD?.length);
+
   const res = await fetch(`${BSKY_API}/com.atproto.server.createSession`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
