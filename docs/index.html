@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bluesky Digest — Wednesday, May 6, 2026</title>
+  <title>Bluesky Digest — Friday, January 17, 2025</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet" />
@@ -20,6 +20,7 @@
       --rule: #d4ccbc;
       --accent: #2d5a8e;
       --accent-warm: #8b3a1a;
+      --accent-green: #2d6b4a;
       --col-width: 680px;
     }
 
@@ -44,7 +45,6 @@
     }
 
     .masthead-eyebrow {
-      font-family: 'Source Serif 4', serif;
       font-size: 0.7rem;
       font-weight: 400;
       letter-spacing: 0.25em;
@@ -63,7 +63,6 @@
     }
 
     .masthead-date {
-      font-family: 'Source Serif 4', serif;
       font-size: 0.85rem;
       font-weight: 300;
       font-style: italic;
@@ -82,6 +81,13 @@
       font-size: 0.75rem;
       color: var(--ink-faint);
       letter-spacing: 0.05em;
+    }
+
+    .masthead-updated {
+      font-size: 0.7rem;
+      color: var(--ink-faint);
+      margin-top: 0.3rem;
+      font-style: italic;
     }
 
     /* ── TOC ── */
@@ -115,6 +121,11 @@
 
     .toc a:hover { border-bottom-color: var(--accent); }
 
+    .toc a.toc--empty {
+      color: var(--ink-faint);
+      font-style: italic;
+    }
+
     /* ── MAIN CONTENT ── */
     .content {
       max-width: var(--col-width);
@@ -128,6 +139,10 @@
       border-top: 1px solid var(--rule);
     }
 
+    .category--empty .category-header {
+      opacity: 0.45;
+    }
+
     .category-header {
       display: flex;
       align-items: baseline;
@@ -135,10 +150,7 @@
       margin-bottom: 1.25rem;
     }
 
-    .category-emoji {
-      font-size: 1.1rem;
-      line-height: 1;
-    }
+    .category-emoji { font-size: 1.1rem; line-height: 1; }
 
     .category-label {
       font-family: 'Playfair Display', Georgia, serif;
@@ -164,14 +176,13 @@
       transition: border-color 0.2s;
     }
 
-    .post-card:hover {
-      border-left-color: var(--accent);
-    }
+    .post-card:hover { border-left-color: var(--accent); }
 
     .post-meta {
       display: flex;
       align-items: baseline;
-      gap: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.6rem;
       margin-bottom: 0.4rem;
     }
 
@@ -187,6 +198,20 @@
       color: var(--ink-faint);
     }
 
+    .post-time {
+      font-size: 0.72rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      margin-left: auto;
+    }
+
+    .engagement {
+      font-size: 0.7rem;
+      color: var(--accent-green);
+      letter-spacing: 0.04em;
+      font-style: normal;
+    }
+
     .post-text {
       font-size: 0.95rem;
       line-height: 1.65;
@@ -194,12 +219,57 @@
       margin-bottom: 0.5rem;
     }
 
+    /* ── EXTERNAL LINKS ── */
+    .external-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .external-link {
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-decoration: none;
+      background: var(--paper-warm);
+      border: 1px solid var(--rule);
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      transition: background 0.15s;
+      word-break: break-all;
+    }
+
+    .external-link:hover { background: var(--rule); }
+
+    /* ── POST FOOTER ── */
+    .post-footer {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
     .post-why {
       font-size: 0.8rem;
       font-style: italic;
       color: var(--ink-light);
       line-height: 1.5;
+      flex: 1;
     }
+
+    .post-link {
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .post-link:hover { border-bottom-color: var(--accent); }
 
     /* ── FOOTER ── */
     .footer {
@@ -216,6 +286,7 @@
     @media (max-width: 500px) {
       .masthead-title { font-size: 1.9rem; }
       body { padding: 0 1rem 3rem; }
+      .post-time { margin-left: 0; }
     }
   </style>
 </head>
@@ -225,82 +296,151 @@
     <p class="masthead-eyebrow">Personal Intelligence Brief</p>
     <h1 class="masthead-title">Bluesky Digest</h1>
     <div class="masthead-rule"></div>
-    <p class="masthead-date">Wednesday, May 6, 2026</p>
+    <p class="masthead-date">Friday, January 17, 2025</p>
     <p class="masthead-meta">6 curated posts across 1 topic</p>
+    <p class="masthead-updated">Last generated at 10:10 PM UTC</p>
   </header>
 
   <nav class="toc" aria-label="Jump to section">
     <span class="toc-label">Sections</span>
-    <a href="#politics">🗳️ Politics</a>
+    <a href="#baseball" class="toc--empty">⚾ Baseball</a><a href="#politics" class="">🏛️ Politics</a><a href="#wildlife_photography" class="toc--empty">📷 Wildlife Photography</a><a href="#bluegrass" class="toc--empty">🪕 Bluegrass</a><a href="#books" class="toc--empty">📚 Books</a>
   </nav>
 
   <main class="content">
     
-      <section class="category">
+        <section class="category category--empty" id="baseball">
+          <div class="category-header">
+            <span class="category-emoji">⚾</span>
+            <h2 class="category-label">Baseball</h2>
+            <span class="post-count">nothing today</span>
+          </div>
+        </section>
+      
+      <section class="category" id="politics">
         <div class="category-header">
-          <span class="category-emoji">🗳️</span>
+          <span class="category-emoji">🏛️</span>
           <h2 class="category-label">Politics</h2>
           <span class="post-count">6 posts</span>
         </div>
         <div class="posts">
           
-      <article class="post-card">
-        <div class="post-meta">
-          <span class="post-author">Bolts</span>
-          <span class="post-handle">@boltsmag.org</span>
-        </div>
-        <p class="post-text">We asked you to send us questions about last week&#039;s Supreme Court ruling, which gutted the Voting Rights Act. Now, two civil rights and redistricting experts answer many of those questions, and explain the ramifications of this landmark decision.</p>
-        <p class="post-why">↳ Expert Q&amp;A explaining the ramifications of a landmark Supreme Court decision on voting rights</p>
-      </article>
-    
-      <article class="post-card">
-        <div class="post-meta">
-          <span class="post-author">Democracy Docket</span>
-          <span class="post-handle">@democracydocket.com</span>
-        </div>
-        <p class="post-text">The DOJ is demanding the personal information of thousands of 2020 Fulton County election workers — a move one local official said amounts to &quot;harassment.&quot; &quot;This is yet another act of outrageous federal overreach designed to intimidate and to chill participation in elections,&quot; he said.</p>
-        <p class="post-why">↳ Reports federal DOJ action targeting election workers, raising concerns about voter intimidation</p>
-      </article>
-    
-      <article class="post-card">
-        <div class="post-meta">
-          <span class="post-author">Josh Marshall</span>
-          <span class="post-handle">@joshtpm.bsky.social</span>
-        </div>
-        <p class="post-text">We Aren&#039;t Paying Enough Attention to What the SCOTUS VRA Decision Means for State Legislatures</p>
-        <p class="post-why">↳ Analysis piece on underreported implications of Supreme Court voting rights decision for state politics</p>
-      </article>
-    
-      <article class="post-card">
-        <div class="post-meta">
-          <span class="post-author">Josh Kovensky</span>
-          <span class="post-handle">@joshkovensky.bsky.social</span>
-        </div>
-        <p class="post-text">We&#039;re following the national assault on black electoral power unleashed by the Supreme Court in the Calais decision, below:</p>
-        <p class="post-why">↳ Live coverage tracking nationwide effects of Supreme Court ruling on Black electoral representation</p>
-      </article>
-    
-      <article class="post-card">
-        <div class="post-meta">
-          <span class="post-author">Leah McElrath</span>
-          <span class="post-handle">@leahmcelrath.bsky.social</span>
-        </div>
-        <p class="post-text">Disenfranchisement of Black voters is happening at a speed and scale unprecedented in my lifetime.</p>
-        <p class="post-why">↳ Commentary capturing the urgency of current voting rights developments</p>
-      </article>
-    
-      <article class="post-card">
-        <div class="post-meta">
-          <span class="post-author">David Kurtz</span>
-          <span class="post-handle">@davidkurtz.bsky.social</span>
-        </div>
-        <p class="post-text">It appears the Trump DOJ is 86-ing the campaign finance investigation into Rep. Andy Ogles (R-TN). There were already signs that the investigation, which began before Trump was re-elected, had stalled out since his second inauguration.</p>
-        <p class="post-why">↳ Reports apparent shutdown of congressional campaign finance investigation by DOJ</p>
-      </article>
-    
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-author">Mr. Business</span>
+            <span class="post-handle">@chadstanton.blacksky.app</span>
+            <span class="post-time">6h ago</span>
+            <span class="engagement" title="Likes + reposts + replies">↑ 4.6k</span>
+          </div>
+          <p class="post-text">The Trump Administration has been using law enforcement to target elected leaders, particularly Black elected leaders, since they singled out Ras Baraka and LaMonica McIver when they tried to inspect a detention center.</p>
+          
+          <div class="post-footer">
+            <p class="post-why">↳ Documents alleged pattern of DOJ weaponization against minority elected officials attempting oversight</p>
+            <a class="post-link" href="https://bsky.app/profile/chadstanton.blacksky.app/post/3ml6zi52l2c2m" target="_blank" rel="noopener">View on Bluesky →</a>
+          </div>
+        </article>
+      
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-author">Andy Craig</span>
+            <span class="post-handle">@andycraig.bsky.social</span>
+            <span class="post-time">26m ago</span>
+            <span class="engagement" title="Likes + reposts + replies">↑ 517</span>
+          </div>
+          <p class="post-text">The post-Watergate reforms didn&#039;t rely on just norms. They relied on tenure protections (such as for inspectors general) and legislative veto mechanisms, among other things. The Supreme Court then sandbagged Congress and gutted all those on bogus unitary executive grounds, as Schiff alludes to.</p>
+          
+          <div class="post-footer">
+            <p class="post-why">↳ Explains structural vulnerabilities in accountability mechanisms that created current institutional crisis</p>
+            <a class="post-link" href="https://bsky.app/profile/andycraig.bsky.social/post/3ml7obw6iec2h" target="_blank" rel="noopener">View on Bluesky →</a>
+          </div>
+        </article>
+      
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-author">Stephen Wolf</span>
+            <span class="post-handle">@stephenwolf.bsky.social</span>
+            <span class="post-time">29m ago</span>
+            <span class="engagement" title="Likes + reposts + replies">↑ 78</span>
+          </div>
+          <p class="post-text">NEW: Tennessee&#039;s GOP unveiled a 9-0 gerrymander that carves up the only Dem House seat, the majority-Black 9th in Memphis. It&#039;s one of several states where the GOP may target Voting Rights districts after the Supreme Court gutted the VRA.</p>
+          <div class="external-links"><a class="external-link" href="https://davesredistricting.org/join/2921405d-6913-4623-81f6-79499eb10a90" target="_blank" rel="noopener">davesredistricting.org/join/2921405d-6913-4623-…</a></div>
+          <div class="post-footer">
+            <p class="post-why">↳ Demonstrates immediate consequences of VRA gutting with explicit racial gerrymandering in key state</p>
+            <a class="post-link" href="https://bsky.app/profile/stephenwolf.bsky.social/post/3ml7o46s2d22v" target="_blank" rel="noopener">View on Bluesky →</a>
+          </div>
+        </article>
+      
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-author">Bill Kristol</span>
+            <span class="post-handle">@billkristolbulwark.bsky.social</span>
+            
+            
+          </div>
+          <p class="post-text">An awful lot of credulous quoting of &quot;federal law enforcement&quot; sources in the coverage of the Louise Lucas matter. Given the manifest politicization of Trump&#039;s DOJ and FBI, why should media agree to quote any of these sources on background?</p>
+          
+          <div class="post-footer">
+            <p class="post-why">↳ Raises critical questions about media credibility when reporting on politicized federal law enforcement</p>
+            
+          </div>
+        </article>
+      
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-author">The Tennessee Holler</span>
+            <span class="post-handle">@thetnholler.bsky.social</span>
+            
+            
+          </div>
+          <p class="post-text">JONES: &quot;It is wrong, Cameron. And history will not look well on what you do in this moment.&quot; Rep. @brotherjones confronts Speaker Sexton after he presents a new map stripping Memphis of representation, diluting it with white power while gaslighting it isn&#039;t about race</p>
+          
+          <div class="post-footer">
+            <p class="post-why">↳ On-the-record confrontation over explicitly racial redistricting plans</p>
+            
+          </div>
+        </article>
+      
+        <article class="post-card">
+          <div class="post-meta">
+            <span class="post-author">Noah Shachtman</span>
+            <span class="post-handle">@noahshachtman.bsky.social</span>
+            
+            
+          </div>
+          <p class="post-text">Just got the following email from the NYC bar association: &quot;Update: All attorneys from the United States Attorney&#039;s Offices have withdrawn from participating in this year&#039;s White Collar Crime Conference.&quot;</p>
+          
+          <div class="post-footer">
+            <p class="post-why">↳ Unprecedented mass withdrawal of federal prosecutors signals institutional instability and morale crisis</p>
+            
+          </div>
+        </article>
+      
         </div>
       </section>
     
+        <section class="category category--empty" id="wildlife_photography">
+          <div class="category-header">
+            <span class="category-emoji">📷</span>
+            <h2 class="category-label">Wildlife Photography</h2>
+            <span class="post-count">nothing today</span>
+          </div>
+        </section>
+      
+        <section class="category category--empty" id="bluegrass">
+          <div class="category-header">
+            <span class="category-emoji">🪕</span>
+            <h2 class="category-label">Bluegrass</h2>
+            <span class="post-count">nothing today</span>
+          </div>
+        </section>
+      
+        <section class="category category--empty" id="books">
+          <div class="category-header">
+            <span class="category-emoji">📚</span>
+            <h2 class="category-label">Books</h2>
+            <span class="post-count">nothing today</span>
+          </div>
+        </section>
+      
   </main>
 
   <footer class="footer">
