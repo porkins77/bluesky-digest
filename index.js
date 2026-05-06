@@ -186,6 +186,7 @@ async function main() {
 
   console.log("→ Merging engagement data...");
   const digest = mergeEngagementData(rawDigest, posts);
+  digest.date = new Date().toISOString().slice(0, 10);
 
   console.log("→ Rendering HTML...");
   writeDigest(digest);
